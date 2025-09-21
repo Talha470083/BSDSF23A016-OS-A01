@@ -1,0 +1,17 @@
+#ifndef MYSTRFUNCTIONS_H
+#define MYSTRFUNCTIONS_H
+
+/* String function prototypes (as required) */
+int mystrlen(const char* s);
+int mystrcpy(char* dest, const char* src);
+int mystrncpy(char* dest, const char* src, int n);
+int mystrcat(char* dest, const char* src);
+
+#endif
+
+
+
+
+
+
+
