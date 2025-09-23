@@ -1,43 +1,89 @@
-# Compiler and flags
-CC = gcc
-CFLAGS = -Iinclude -Wall -Wextra -O2
+# ==============================
+# Makefile for Dynamic Build
+# ==============================
+
+CC      = gcc
+CFLAGS  = -Wall -Iinclude -fPIC
+LDFLAGS = -Llib -lmyutils
 
 # Directories
 SRC_DIR = src
-BUILD_DIR = build
-LIB_DIR = lib
+OBJ_DIR = obj
 BIN_DIR = bin
+LIB_DIR = lib
 
-# Source and object files
-UTILS_SRCS = $(SRC_DIR)/mystrfunctions.c $(SRC_DIR)/myfilefunctions.c
-UTILS_OBJS = $(BUILD_DIR)/mystrfunctions.o $(BUILD_DIR)/myfilefunctions.o
-LIBRARY = $(LIB_DIR)/libmyutils.a
+# Sources and Objects
+SRCS = $(SRC_DIR)/myfilefunctions.c $(SRC_DIR)/mystrfunctions.c
+OBJS = $(OBJ_DIR)/myfilefunctions.o $(OBJ_DIR)/mystrfunctions.o
 
-MAIN_SRC = $(SRC_DIR)/main.c
-MAIN_OBJ = $(BUILD_DIR)/main.o
-TARGET = $(BIN_DIR)/client_static
+# Targets
+LIB  = $(LIB_DIR)/libmyutils.so
+CLIENT = $(BIN_DIR)/client_dynamic
 
 # Default target
-all: $(TARGET)
+all: $(CLIENT)
 
-# Link the final executable
-$(TARGET): $(MAIN_OBJ) $(LIBRARY)
-	$(CC) $(CFLAGS) $(MAIN_OBJ) $(LIBRARY) -o $(TARGET)
+# Rule to build client
+$(CLIENT): $(OBJ_DIR)/main.o $(LIB)
+	$(CC) $(OBJ_DIR)/main.o -o $(CLIENT) $(LDFLAGS)
 
-# Build the static library
-$(LIBRARY): $(UTILS_OBJS)
-	ar rcs $(LIBRARY) $(UTILS_OBJS)
-	ranlib $(LIBRARY)
+# Rule to build dynamic library
+$(LIB): $(OBJS)
+	$(CC) -shared -o $(LIB) $(OBJS)
 
-# Compile .c files into .o files
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
+# Compile main
+$(OBJ_DIR)/main.o: $(SRC_DIR)/main.c include/myfilefunctions.h
+	$(CC) $(CFLAGS) -c $(SRC_DIR)/main.c -o $(OBJ_DIR)/main.o
+
+# Compile other .c files into position-independent .o files
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c include/myfilefunctions.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
-# Clean build artifacts
+# Clean up
 clean:
-	rm -f $(BUILD_DIR)/*.o $(TARGET) $(LIBRARY)
+	rm -f $(OBJ_DIR)/*.o $(LIB) $(CLIENT)
 
 .PHONY: all clean
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
